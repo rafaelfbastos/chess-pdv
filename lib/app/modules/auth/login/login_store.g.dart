@@ -40,6 +40,22 @@ mixin _$LoginStore on LoginStoreBase, Store {
     });
   }
 
+  late final _$isLoggedAtom =
+      Atom(name: 'LoginStoreBase.isLogged', context: context);
+
+  @override
+  bool get isLogged {
+    _$isLoggedAtom.reportRead();
+    return super.isLogged;
+  }
+
+  @override
+  set isLogged(bool value) {
+    _$isLoggedAtom.reportWrite(value, super.isLogged, () {
+      super.isLogged = value;
+    });
+  }
+
   late final _$loginAsyncAction =
       AsyncAction('LoginStoreBase.login', context: context);
 
@@ -66,7 +82,8 @@ mixin _$LoginStore on LoginStoreBase, Store {
   String toString() {
     return '''
 loading: ${loading},
-error: ${error}
+error: ${error},
+isLogged: ${isLogged}
     ''';
   }
 }

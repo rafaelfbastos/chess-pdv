@@ -28,7 +28,7 @@ abstract class LoginStoreBase with Store {
       await _authService.login(email, password);
       isLogged = true;
     } catch (e) {
-      error = e.toString();
+      error = 'Erro ao realizar login';
     } finally {
       loading = false;
     }

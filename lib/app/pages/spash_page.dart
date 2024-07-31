@@ -1,5 +1,4 @@
 import 'package:chess_pdv/app/core/store/auth_store.dart';
-import 'package:chess_pdv/app/model/authorization_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -18,37 +17,30 @@ class _SpashPageState extends State<SpashPage> {
   @override
   void initState() {
     reaction((_) => widget._authStore.authorization, (authorization) {
-
       if (authorization != null) {
-        Modular.to.pushReplacementNamed('/');
+        Modular.to.pushReplacementNamed('/select-pdv');
       } else {
         Modular.to.pushReplacementNamed('/auth/login');
       }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget._authStore.loadBoxes();
-      
+
       if (widget._authStore.authorization != null) {
-        Modular.to.pushReplacementNamed('/');
+        Modular.to.pushReplacementNamed('/select-pdv');
       } else {
         Modular.to.pushReplacementNamed('/auth/login');
       }
-
     });
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: const Text('Splash')),
-        body:  Center(child: 
-        ElevatedButton(onPressed: (){
-          var authorization = AuthorizationModel(token: '22323', type: 'Bearer');
-          widget._authStore.setAuthorization(authorization);
-        }, child: const Text('Splash'),)
-        ));
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }

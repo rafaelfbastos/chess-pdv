@@ -1,5 +1,6 @@
 import 'package:chess_pdv/app/model/authorization_model.dart';
 import 'package:chess_pdv/app/model/user_model.dart';
+import 'package:dio/dio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mobx/mobx.dart';
 part 'auth_store.g.dart';
@@ -8,10 +9,12 @@ class AuthStore = AuthStoreBase with _$AuthStore;
 
 abstract class AuthStoreBase with Store {
 
+  final Dio _dio;
+
   late Box<AuthorizationModel> _authorizationBox;
   late Box<UserModel> _userBox;
 
-  AuthStoreBase() {
+  AuthStoreBase({required Dio dio}):_dio = dio {
     _authorizationBox = Hive.box<AuthorizationModel>('authorization');
     _userBox = Hive.box<UserModel>('user');
     
@@ -30,12 +33,16 @@ abstract class AuthStoreBase with Store {
   loadBoxes(){
     authorization = _authorizationBox.values.firstOrNull;
     user = _userBox.values.firstOrNull;
+    if (authorization != null) {
+      _dio.options.headers['Authorization'] = 'Bearer ${authorization!.token}';
+    } 
   }
 
   @action
   setAuthorization(AuthorizationModel value){
     _authorizationBox.put('authorization', value);
     authorization = value;
+    _dio.options.headers['Authorization'] = 'Bearer ${value.token}';
   }
   
   @action

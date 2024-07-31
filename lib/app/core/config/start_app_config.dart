@@ -1,6 +1,7 @@
 import 'package:chess_pdv/app/core/helpers/environment.dart';
 import 'package:chess_pdv/app/core/helpers/platforms_enum.dart';
 import 'package:chess_pdv/app/model/authorization_model.dart';
+import 'package:chess_pdv/app/model/pdv_model.dart';
 import 'package:chess_pdv/app/model/role_model.dart';
 import 'package:chess_pdv/app/model/user_model.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,8 @@ class StartAppConfig {
     Hive.registerAdapter(UserModelAdapter());
     Hive.registerAdapter(RoleModelAdapter());
     Hive.registerAdapter(AuthorizationModelAdapter());
+    Hive.registerAdapter(PdvModelAdapter());
+    await Hive.openBox<PdvModel>('pdv');
     await Hive.openBox<UserModel>('user');
     await Hive.openBox<AuthorizationModel>('authorization');
   }

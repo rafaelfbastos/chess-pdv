@@ -4,9 +4,10 @@ import 'package:chess_pdv/app/core/ui/theme_extension.dart';
 import 'package:chess_pdv/app/core/widgets/custom_input.dart';
 import 'package:chess_pdv/app/modules/auth/login/login_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:mobx/mobx.dart';
 import 'package:validatorless/validatorless.dart';
-import 'package:loader_overlay/loader_overlay.dart';
+
 
 class LoginPage extends StatefulWidget {
   final LoginStore _loginStore;
@@ -29,9 +30,9 @@ class _LoginPageState extends State<LoginPage> {
     
    final loadReaction = reaction((__)=> widget._loginStore.loading, (loading){
       if(loading){
-        context.loaderOverlay.show();
+        Loader.show(context,overlayColor: context.primaryColor);
       }else{
-        context.loaderOverlay.hide();
+        Loader.hide();
       }
     });
 

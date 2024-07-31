@@ -56,6 +56,10 @@ class UserModel {
     );
   }
 
+  factory UserModel.blanck() {
+    return UserModel(id: 0, name: '', email: '', role: RoleModel(id: 0, name: ''));
+  }
+
   String toJson() => json.encode(toMap());
 
   factory UserModel.fromJson(String source) =>

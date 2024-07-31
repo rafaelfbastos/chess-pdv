@@ -9,12 +9,12 @@ import 'package:flutter_modular/flutter_modular.dart';
 class AppModule extends Module {
   @override
   List<Bind> get binds => [
-        Bind.singleton((i) => AuthStore()),
         Bind.singleton((i) => Dio(
               BaseOptions(
                 baseUrl: Environment.baseUrl,
               ),
             )),
+        Bind.singleton((i) => AuthStore(dio: i())..loadBoxes()),
       ];
 
   @override
