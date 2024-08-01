@@ -4,7 +4,7 @@ extension ThemeExtension on BuildContext {
   
   Color get primaryColor => const Color(0xff1AB0FB);
   Color get secondaryColor => const Color(0xff0688C2);
-  Color get backgroudColor => const Color(0xffF4F5FA);
+  Color get backgroudColor => const Color(0xffF4F5F7);
   ButtonStyle get primaryButtonStyle => ElevatedButton.styleFrom(
     backgroundColor: primaryColor,
     foregroundColor: Colors.white,

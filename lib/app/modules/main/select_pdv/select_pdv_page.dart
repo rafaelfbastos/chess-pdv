@@ -68,35 +68,37 @@ class _SelectPdvPageState extends State<SelectPdvPage> {
         title: '',
       ),
       body: Observer(
-        builder: (context) => Padding(
-            padding: const EdgeInsets.all(40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'SELECIONE O PONTO DE VENDA',
-                  style: TextStyle(
-                      color: context.secondaryColor,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Wrap(
-                  spacing: 20,
-                  children: widget._pdvStore.pdvList
-                      .map((pdv) => CardSelectPdv(
-                            pdv: pdv,
-                            ontap: () {
-                              widget._pdvStore.selectPdv(pdv);
-                              Modular.to.pushReplacementNamed('/');
-                            },
-                          ))
-                      .toList(),
-                ),
-              ],
-            )),
+        builder: (context) => SingleChildScrollView(
+          child: Padding(
+              padding: const EdgeInsets.all(40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'SELECIONE O PONTO DE VENDA',
+                    style: TextStyle(
+                        color: context.secondaryColor,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Wrap(
+                    spacing: 20,
+                    children: widget._pdvStore.pdvList
+                        .map((pdv) => CardSelectPdv(
+                              pdv: pdv,
+                              ontap: () {
+                                widget._pdvStore.selectPdv(pdv);
+                                Modular.to.pushReplacementNamed('/');
+                              },
+                            ))
+                        .toList(),
+                  ),
+                ],
+              )),
+        ),
       ),
     );
   }
