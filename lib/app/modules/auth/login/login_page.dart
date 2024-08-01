@@ -4,7 +4,7 @@ import 'package:chess_pdv/app/core/ui/theme_extension.dart';
 import 'package:chess_pdv/app/core/widgets/custom_input.dart';
 import 'package:chess_pdv/app/modules/auth/login/login_store.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mobx/mobx.dart';
 import 'package:validatorless/validatorless.dart';
 
@@ -12,8 +12,8 @@ import 'package:validatorless/validatorless.dart';
 class LoginPage extends StatefulWidget {
   final LoginStore _loginStore;
 
-  const LoginPage({super.key, required LoginStore LoginStore})
-      : _loginStore = LoginStore;
+  const LoginPage({super.key, required LoginStore loginStore})
+      : _loginStore = loginStore;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -30,9 +30,9 @@ class _LoginPageState extends State<LoginPage> {
     
    final loadReaction = reaction((__)=> widget._loginStore.loading, (loading){
       if(loading){
-        Loader.show(context,overlayColor: context.primaryColor);
+        context.loaderOverlay.show();
       }else{
-        Loader.hide();
+        context.loaderOverlay.hide();
       }
     });
 
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
 
     final isLogged = reaction((__)=> widget._loginStore.isLogged, (isLogged){
       if(isLogged){
-        Navigator.of(context).pushReplacementNamed('/');
+        Navigator.of(context).pushReplacementNamed('/select-pdv');
       }
     });
 

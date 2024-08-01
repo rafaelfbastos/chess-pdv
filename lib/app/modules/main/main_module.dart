@@ -7,13 +7,13 @@ import 'package:chess_pdv/app/repository/pdv_repository_impl.dart';
 import 'package:chess_pdv/app/services/pdv_service.dart';
 import 'package:chess_pdv/app/services/pdv_service_impl.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class MainModule extends Module {
   @override
   List<Bind> get binds => [
-        Bind<PdvRepository>(
-            (i) => PdvRepositoryImpl(dio: i.get(), authStore: i.get())),
-        Bind<PdvService>((i) => PdvServiceImpl(pdvRepository: i.get())),
+        Bind<PdvRepository>((i) => PdvRepositoryImpl(dio: i(), authStore: i())),
+        Bind<PdvService>((i) => PdvServiceImpl(pdvRepository: i())),
         Bind.singleton<PdvStore>((i) => PdvStore(pdvService: i())
           ..loadStoredPdv()
           ..loadPdvs()),
@@ -25,12 +25,16 @@ class MainModule extends Module {
   @override
   List<ModularRoute> get routes => [
         ChildRoute('/select-pdv',
-            child: (context, args) => SelectPdvPage(
-                  pdvStore: context.read(),
+            child: (context, args) => LoaderOverlay(
+                  child: SelectPdvPage(
+                    pdvStore: context.read(),
+                  ),
                 )),
         ChildRoute('/',
-            child: (context, args) => PdvPage(
-                  controller: context.read(),
+            child: (context, args) => LoaderOverlay(
+                  child: PdvPage(
+                    controller: context.read(),
+                  ),
                 ))
       ];
 }

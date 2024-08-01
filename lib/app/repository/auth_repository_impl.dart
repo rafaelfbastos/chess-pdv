@@ -28,8 +28,8 @@ class AuthRepositoryImpl extends AuthRepository {
       if (data['user'] != null) {
           final user = UserModel.fromMap(data['user']);
           final authorization = AuthorizationModel.fromMap(data['authorization']);
-          _authStore.setAuthorization(authorization);
           _authStore.setUser(user);
+          _authStore.setAuthorization(authorization);
       } else {
         throw AuthException(message: 'Erro ao fazer login');
       }

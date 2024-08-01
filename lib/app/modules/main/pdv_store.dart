@@ -14,6 +14,12 @@ abstract class PdvStoreBase with Store {
   final PdvService _pdvService;
 
   @observable
+  bool isLoading = false;
+
+  @observable
+  String error = '';
+
+  @observable
   PdvModel? selectedPdv;
 
   @observable
@@ -22,8 +28,6 @@ abstract class PdvStoreBase with Store {
   PdvStoreBase({required PdvService pdvService}) : _pdvService = pdvService {
     _pdvBox = Hive.box<PdvModel>('pdv');
   }
-
-  
 
 
   @action
@@ -34,11 +38,14 @@ abstract class PdvStoreBase with Store {
   @action
   loadPdvs() async {
     pdvList.clear();
+    isLoading = true;
     try {
       final pdvs = await _pdvService.fetchAll();
       pdvList.addAll(pdvs);
     } catch (e) {
-      print(e);
+      error = e.toString();
+    }finally{
+      isLoading = false;
     }
     
   }
@@ -53,6 +60,9 @@ abstract class PdvStoreBase with Store {
     selectedPdv = null;
     _pdvBox.delete('pdv');
   }
+
+  @action
+  setError(String value) => error = value;
 
 
   
