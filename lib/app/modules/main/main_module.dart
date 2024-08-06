@@ -6,10 +6,14 @@ import 'package:chess_pdv/app/repository/pdv_repository.dart';
 import 'package:chess_pdv/app/repository/pdv_repository_impl.dart';
 import 'package:chess_pdv/app/repository/product_repository.dart';
 import 'package:chess_pdv/app/repository/product_repository_impl.dart';
+import 'package:chess_pdv/app/repository/room_repository.dart';
+import 'package:chess_pdv/app/repository/room_repository_impl.dart';
 import 'package:chess_pdv/app/services/pdv_service.dart';
 import 'package:chess_pdv/app/services/pdv_service_impl.dart';
 import 'package:chess_pdv/app/services/product_service.dart';
 import 'package:chess_pdv/app/services/product_service_impl.dart';
+import 'package:chess_pdv/app/services/room_service.dart';
+import 'package:chess_pdv/app/services/room_service_impl.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
@@ -21,11 +25,15 @@ class MainModule extends Module {
         Bind.singleton<PdvStore>((i) => PdvStore(pdvService: i())
           ..loadStoredPdv()
           ..loadPdvs()),
+        // Product
         Bind<ProductRepository>((i)=> ProductRepositoryImpl(dio: i())),
         Bind<ProductService>((i)=>ProductServiceImpl(productRepository: i())),
+        //Room
+        Bind<RoomRepository>((i) => RoomRepositoryImpl(dio: i())),
+        Bind<RoomService>((i) => RoomServiceImpl(roomRepository: i())),
+        // Controllers
         Bind<PdvPageController>(
-          (i) => PdvPageController(pdvStore: i(), productService: i()),
-        )
+          (i) => PdvPageController(pdvStore: i(), productService: i(),roomService: i())..load())
       ];
 
   @override

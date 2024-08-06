@@ -1,6 +1,5 @@
 import 'package:chess_pdv/app/core/ui/theme_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomInput extends StatelessWidget {
@@ -11,6 +10,7 @@ class CustomInput extends StatelessWidget {
   final TextEditingController? controller;
   final FormFieldValidator<String>? validator;
   final FocusNode? focusNode;
+  final Function(String)? onFieldSubmitted;
 
   CustomInput(
       {super.key,
@@ -19,7 +19,7 @@ class CustomInput extends StatelessWidget {
       this.suffixIconButton,
       this.controller,
       this.validator,
-      this.focusNode})
+      this.focusNode, this.onFieldSubmitted})
       : assert(obscureText == true ? suffixIconButton == null : true),
         obscureTextVN = ValueNotifier(obscureText);
 
@@ -29,9 +29,11 @@ class CustomInput extends StatelessWidget {
       valueListenable: obscureTextVN,
       builder: (_, obscureTextValue, child) {
         return TextFormField(
+          onFieldSubmitted: onFieldSubmitted,
           validator: validator,
           controller: controller,
           focusNode: focusNode,
+          style:  TextStyle(color: context.secondaryColor),
           decoration: InputDecoration(
               labelText: label,
               labelStyle: const TextStyle(fontSize: 15, color: Colors.black),

@@ -8,7 +8,6 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:mobx/mobx.dart';
 import 'package:validatorless/validatorless.dart';
 
-
 class LoginPage extends StatefulWidget {
   final LoginStore _loginStore;
 
@@ -24,33 +23,34 @@ class _LoginPageState extends State<LoginPage> {
   final passwordEC = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final toDispose = <ReactionDisposer>[];
+  final passwordFocus = FocusNode();
+
 
   @override
   void initState() {
-    
-   final loadReaction = reaction((__)=> widget._loginStore.loading, (loading){
-      if(loading){
+    final loadReaction =
+        reaction((__) => widget._loginStore.loading, (loading) {
+      if (loading) {
         context.loaderOverlay.show();
-      }else{
+      } else {
         context.loaderOverlay.hide();
       }
     });
 
-    final errorMessage = reaction((__)=> widget._loginStore.error, (error){
-      if(error.isNotEmpty){
+    final errorMessage = reaction((__) => widget._loginStore.error, (error) {
+      if (error.isNotEmpty) {
         Messages.of(context).showError(error);
         widget._loginStore.setError('');
       }
     });
 
-    final isLogged = reaction((__)=> widget._loginStore.isLogged, (isLogged){
-      if(isLogged){
+    final isLogged = reaction((__) => widget._loginStore.isLogged, (isLogged) {
+      if (isLogged) {
         Navigator.of(context).pushReplacementNamed('/select-pdv');
       }
     });
 
     toDispose.addAll([loadReaction, errorMessage, isLogged]);
-
 
     super.initState();
   }
@@ -60,12 +60,19 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
     emailEC.dispose();
     passwordEC.dispose();
+    passwordFocus.dispose();
     // ignore: avoid_function_literals_in_foreach_calls
     toDispose.forEach((d) => d());
   }
 
   @override
   Widget build(BuildContext context) {
+    login() {
+      if (formKey.currentState!.validate()) {
+        widget._loginStore.login(emailEC.text, passwordEC.text);
+      }
+    }
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: Row(
@@ -84,6 +91,8 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 40, vertical: 10),
                         child: CustomInput(
+                          onFieldSubmitted: (p0) =>
+                              passwordFocus.requestFocus(),
                           controller: emailEC,
                           validator: Validatorless.multiple([
                             Validatorless.required('Campo obrigatório'),
@@ -97,6 +106,8 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 40, vertical: 10),
                         child: CustomInput(
+                          focusNode: passwordFocus,
+                          onFieldSubmitted: (p0) => login(),
                           controller: passwordEC,
                           validator: Validatorless.multiple([
                             Validatorless.required('Campo obrigatório'),
@@ -114,12 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: ElevatedButton(
                                 style: context.primaryButtonStyle,
-                                onPressed: () {
-                                  if (formKey.currentState!.validate()) {
-                                    widget._loginStore.login(
-                                        emailEC.text, passwordEC.text);
-                                  }
-                                },
+                                onPressed: () => login(),
                                 child: const Text(
                                   'ENTRAR',
                                   style: TextStyle(

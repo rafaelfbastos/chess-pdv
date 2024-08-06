@@ -43,7 +43,7 @@ abstract class PdvStoreBase with Store {
       final pdvs = await _pdvService.fetchAll();
       pdvList.addAll(pdvs);
     } catch (e) {
-      error = e.toString();
+      error ='Error no servidor';
     }finally{
       isLoading = false;
     }

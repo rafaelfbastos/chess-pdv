@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:chess_pdv/app/model/product_group_model.dart';
+import 'package:chess_pdv/app/model/product_pivot.dart';
 
 class ProductModel with CustomDropdownListFilter {
   final int id;
@@ -21,8 +22,9 @@ class ProductModel with CustomDropdownListFilter {
   final String active;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String text;
-  final ProductGroupModel group;
+  final String? text;
+  final ProductGroupModel? group;
+  final ProductPivot? pivot;
 
   ProductModel({
     required this.id,
@@ -41,8 +43,9 @@ class ProductModel with CustomDropdownListFilter {
     required this.active,
     required this.createdAt,
     required this.updatedAt,
-    required this.text,
-    required this.group,
+    this.text,
+    this.group,
+    this.pivot,
   });
 
   ProductModel copyWith({
@@ -64,6 +67,7 @@ class ProductModel with CustomDropdownListFilter {
     DateTime? updatedAt,
     String? text,
     ProductGroupModel? group,
+    ProductPivot? pivot,
   }) {
     return ProductModel(
       id: id ?? this.id,
@@ -85,6 +89,7 @@ class ProductModel with CustomDropdownListFilter {
       updatedAt: updatedAt ?? this.updatedAt,
       text: text ?? this.text,
       group: group ?? this.group,
+      pivot: pivot ?? this.pivot,
     );
   }
 
@@ -107,7 +112,8 @@ class ProductModel with CustomDropdownListFilter {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'text': text,
-      'group': group.toMap(),
+      'group': group?.toMap(),
+      'pivot': pivot?.toMap(),
     };
   }
 
@@ -130,8 +136,13 @@ class ProductModel with CustomDropdownListFilter {
       active: map['active'] as String,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
-      text: map['text'] as String,
-      group: ProductGroupModel.fromMap(map['group'] as Map<String, dynamic>),
+      text: map['text'],
+      group: map['group'] == null
+          ? null
+          : ProductGroupModel.fromMap(map['group'] as Map<String, dynamic>),
+      pivot: map['pivot'] == null
+          ? null
+          : ProductPivot.fromMap(map['pivot'] as Map<String, dynamic>),
     );
   }
 
@@ -141,57 +152,12 @@ class ProductModel with CustomDropdownListFilter {
       ProductModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => text;
+  String toString() => text ?? description;
 
-  @override
-  bool operator ==(covariant ProductModel other) {
-    if (identical(this, other)) return true;
-
-    return other.id == id &&
-        other.chessProductId == chessProductId &&
-        other.groupProductsId == groupProductsId &&
-        other.unitsId == unitsId &&
-        other.code == code &&
-        other.description == description &&
-        other.unitCost == unitCost &&
-        other.salePrice == salePrice &&
-        other.contributionMargin == contributionMargin &&
-        other.costsContributionMarginPercent ==
-            costsContributionMarginPercent &&
-        other.isProduct == isProduct &&
-        other.ncm == ncm &&
-        other.cfop == cfop &&
-        other.active == active &&
-        other.createdAt == createdAt &&
-        other.updatedAt == updatedAt &&
-        other.text == text &&
-        other.group == group;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        chessProductId.hashCode ^
-        groupProductsId.hashCode ^
-        unitsId.hashCode ^
-        code.hashCode ^
-        description.hashCode ^
-        unitCost.hashCode ^
-        salePrice.hashCode ^
-        contributionMargin.hashCode ^
-        costsContributionMarginPercent.hashCode ^
-        isProduct.hashCode ^
-        ncm.hashCode ^
-        cfop.hashCode ^
-        active.hashCode ^
-        createdAt.hashCode ^
-        updatedAt.hashCode ^
-        text.hashCode ^
-        group.hashCode;
-  }
 
   @override
   bool filter(String query) {
-    return text.toLowerCase().contains(query.toLowerCase());
+    return text?.toLowerCase().contains(query.toLowerCase()) ??
+        description.toLowerCase().contains(query.toLowerCase());
   }
 }

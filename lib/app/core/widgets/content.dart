@@ -17,7 +17,7 @@ class Content extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 50,
+            height: 40,
             width: double.maxFinite,
             decoration: BoxDecoration(
                 borderRadius:
