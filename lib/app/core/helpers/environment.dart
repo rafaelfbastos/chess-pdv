@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 
 class Environment {
   // ignore: non_constant_identifier_names
-  static String get baseUrl => (kDebugMode)?'http://localhost:8000/api':'http://rfbserver.ddns.net:8088/api';
+  static String get baseUrl => (kDebugMode)?'http://localhost:8000/api':'https://api-hom.aerohotel.chesshotel.ocatech.com.br/api/';
   static PlatformsEnum platform = PlatformsEnum.unknown;
 
   static String get backgroudUrl {

@@ -56988,7 +56988,7 @@ r=new A.IN(!0,new A.a9o(),B.mS,s,B.b_,s,r,"/**","","",B.ea,B.ds,p,s,B.cB,t.tr)
 r.vJ(B.cB,B.ea,s,B.ds,"/**","","",p)
 return A.b([q,k,l,r],t.Vm)}}
 A.a9l.prototype={
-$1(a){var s=A.b3e("http://rfbserver.ddns.net:8088/api"),r=new A.QQ($,new A.Sv(A.b([B.DP],t.i6)),$,new A.aha(51200),!1)
+$1(a){var s=A.b3e("https://api-hom.aerohotel.chesshotel.ocatech.com.br/api/"),r=new A.QQ($,new A.Sv(A.b([B.DP],t.i6)),$,new A.aha(51200),!1)
 r.DO$=s
 r.a2g$=new A.aax(A.as(t.Gf))
 return r},
