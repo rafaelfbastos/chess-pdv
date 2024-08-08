@@ -8,6 +8,7 @@ extension ThemeExtension on BuildContext {
   Color get backgroudColor => const Color(0xffF4F5F7);
   Color get alertColor => const Color(0xfff24e5c);
   Color get grey => const Color(0xff93969b);
+  TextStyle get inputStyle =>  TextStyle(color: Colors.grey[700], fontSize: 12, fontWeight: FontWeight.w700);
   
   ButtonStyle get primaryButtonStyle => ElevatedButton.styleFrom(
     backgroundColor: primaryColor,

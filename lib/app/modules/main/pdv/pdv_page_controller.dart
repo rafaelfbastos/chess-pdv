@@ -1,7 +1,9 @@
 import 'package:chess_pdv/app/core/excepition/fetch_exception.dart';
+import 'package:chess_pdv/app/model/accommodation_item_removed_model.dart';
 import 'package:chess_pdv/app/model/accommodation_model.dart';
 import 'package:chess_pdv/app/model/pdv_model.dart';
 import 'package:chess_pdv/app/model/product_model.dart';
+import 'package:chess_pdv/app/model/product_pivot.dart';
 import 'package:chess_pdv/app/model/room_exibhition_model.dart';
 import 'package:chess_pdv/app/modules/main/pdv_store.dart';
 import 'package:chess_pdv/app/services/product_service.dart';
@@ -31,10 +33,16 @@ abstract class PdvPageControllerBase with Store {
   String error = '';
 
   @observable
+  String success = '';
+
+  @observable
   RoomExibhitionModel? selectedRoom;
 
   @computed
   PdvModel get pdv => _pdvStore.selectedPdv!;
+
+  @observable
+  List<String> guestAcommodation = [];
 
   @observable
   ObservableList<ProductModel> products = ObservableList<ProductModel>();
@@ -70,8 +78,7 @@ abstract class PdvPageControllerBase with Store {
   @observable
   ProductModel? selectedProduct;
 
-
-
+  
 
   @action
   Future<void> loadProducts() async {
@@ -127,6 +134,7 @@ abstract class PdvPageControllerBase with Store {
   }
 
   load() async {
+    guestAcommodation = _pdvStore.guestAcommodation;
     await Future.wait([loadProducts(), loadRooms()]);
   }
 
@@ -146,26 +154,86 @@ abstract class PdvPageControllerBase with Store {
   setError(String value) => error = value;
 
   @action
+  setSuccess(String value) => success = value;
+
+  @action
   openDeleteItemModal(ProductModel product) {
-    selectedProduct = orderproducts.firstWhere((element) => element.id == product.id);
+    selectedProduct =
+        orderproducts.firstWhere((element) => element.id == product.id);
     showDeleteItemModal = true;
-  
   }
 
   @action
-  delectProduct(int qtd) {
-    final index = orderproducts
-        .indexWhere((element) => element.id == selectedProduct?.id);
-    final int qtdProduct = selectedProduct?.pivot?.quantity ?? 1;
-    if (qtdProduct > qtd) {
+  delectProduct(int qtd, String? description) async {
+    isLoading = true;
+    try {
+      final index = orderproducts.indexWhere((element) =>
+          element.id == selectedProduct?.id && element.pivot?.pdvId == pdv.id);
+      final int qtdProduct = selectedProduct?.pivot?.quantity ?? 1;
 
-      final product = selectedProduct!.copyWith(
-          pivot: selectedProduct!.pivot!.copyWith(quantity: qtdProduct - qtd));
-      orderproducts[index] = product;
-    } else {
-      orderproducts.removeAt(index);
+      final productRemoved = AccommodationItemRemovedModel(
+          accommodationId: currentAccommodation!.id,
+          productId: selectedProduct!.id,
+          quantity: qtd.toDouble(),
+          obs: description);
+
+      if (qtdProduct > qtd) {
+        final product = selectedProduct!.copyWith(
+            pivot:
+                selectedProduct!.pivot!.copyWith(quantity: qtdProduct - qtd));
+        orderproducts[index] = product;
+
+        await _roomService.updateAccommodationProdutcs(
+            currentAccommodation!, orderproducts);
+        await _roomService.removeProductFromAccommodation(productRemoved);
+        success = 'Produto removido com sucesso';
+      } else {
+        final product = selectedProduct!.copyWith(
+            pivot:
+                selectedProduct!.pivot!.copyWith(quantity: qtdProduct - qtd));
+        orderproducts[index] = product;
+
+        await _roomService.updateAccommodationProdutcs(
+            currentAccommodation!, orderproducts);
+
+        await _roomService.removeProductFromAccommodation(productRemoved);
+        orderproducts.removeAt(index);
+        success = 'Produto removido com sucesso';
+      }
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      isLoading = false;
     }
   }
 
-
+  @action
+  insertProduct(ProductModel product, int qtd) async {
+    isLoading = true;
+    try {
+      final index = orderproducts
+          .indexWhere((e) => e.id == product.id && e.pivot?.pdvId == pdv.id);
+      if (index != -1) {
+        final producFinded = orderproducts.elementAt(index);
+        final qtdExist = producFinded.pivot!.quantity;
+        final pivot = producFinded.pivot?.copyWith(quantity: qtdExist + qtd);
+        orderproducts[index] = producFinded.copyWith(pivot: pivot);
+      } else {
+        final pivot = ProductPivot(
+            accommodationId: currentAccommodation!.id,
+            productId: product.id,
+            quantity: qtd,
+            pdvId: pdv.id);
+        final productAdd = product.copyWith(pivot: pivot);
+        orderproducts.add(productAdd);
+      }
+      await _roomService.updateAccommodationProdutcs(
+          currentAccommodation!, orderproducts);
+      success = 'Produto adicionado com sucesso';
+    } catch (e) {
+      error = 'Erro ao adicionar produto';
+    } finally {
+      isLoading = false;
+    }
+  }
 }

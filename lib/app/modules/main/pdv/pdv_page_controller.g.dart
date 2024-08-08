@@ -55,6 +55,22 @@ mixin _$PdvPageController on PdvPageControllerBase, Store {
     });
   }
 
+  late final _$successAtom =
+      Atom(name: 'PdvPageControllerBase.success', context: context);
+
+  @override
+  String get success {
+    _$successAtom.reportRead();
+    return super.success;
+  }
+
+  @override
+  set success(String value) {
+    _$successAtom.reportWrite(value, super.success, () {
+      super.success = value;
+    });
+  }
+
   late final _$selectedRoomAtom =
       Atom(name: 'PdvPageControllerBase.selectedRoom', context: context);
 
@@ -68,6 +84,22 @@ mixin _$PdvPageController on PdvPageControllerBase, Store {
   set selectedRoom(RoomExibhitionModel? value) {
     _$selectedRoomAtom.reportWrite(value, super.selectedRoom, () {
       super.selectedRoom = value;
+    });
+  }
+
+  late final _$guestAcommodationAtom =
+      Atom(name: 'PdvPageControllerBase.guestAcommodation', context: context);
+
+  @override
+  List<String> get guestAcommodation {
+    _$guestAcommodationAtom.reportRead();
+    return super.guestAcommodation;
+  }
+
+  @override
+  set guestAcommodation(List<String> value) {
+    _$guestAcommodationAtom.reportWrite(value, super.guestAcommodation, () {
+      super.guestAcommodation = value;
     });
   }
 
@@ -242,6 +274,24 @@ mixin _$PdvPageController on PdvPageControllerBase, Store {
         .run(() => super.setCurrentAccommodation(room));
   }
 
+  late final _$delectProductAsyncAction =
+      AsyncAction('PdvPageControllerBase.delectProduct', context: context);
+
+  @override
+  Future delectProduct(int qtd, String? description) {
+    return _$delectProductAsyncAction
+        .run(() => super.delectProduct(qtd, description));
+  }
+
+  late final _$insertProductAsyncAction =
+      AsyncAction('PdvPageControllerBase.insertProduct', context: context);
+
+  @override
+  Future insertProduct(ProductModel product, int qtd) {
+    return _$insertProductAsyncAction
+        .run(() => super.insertProduct(product, qtd));
+  }
+
   late final _$PdvPageControllerBaseActionController =
       ActionController(name: 'PdvPageControllerBase', context: context);
 
@@ -268,6 +318,17 @@ mixin _$PdvPageController on PdvPageControllerBase, Store {
   }
 
   @override
+  dynamic setSuccess(String value) {
+    final _$actionInfo = _$PdvPageControllerBaseActionController.startAction(
+        name: 'PdvPageControllerBase.setSuccess');
+    try {
+      return super.setSuccess(value);
+    } finally {
+      _$PdvPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic openDeleteItemModal(ProductModel product) {
     final _$actionInfo = _$PdvPageControllerBaseActionController.startAction(
         name: 'PdvPageControllerBase.openDeleteItemModal');
@@ -279,22 +340,13 @@ mixin _$PdvPageController on PdvPageControllerBase, Store {
   }
 
   @override
-  dynamic delectProduct(int qtd) {
-    final _$actionInfo = _$PdvPageControllerBaseActionController.startAction(
-        name: 'PdvPageControllerBase.delectProduct');
-    try {
-      return super.delectProduct(qtd);
-    } finally {
-      _$PdvPageControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   String toString() {
     return '''
 isLoading: ${isLoading},
 error: ${error},
+success: ${success},
 selectedRoom: ${selectedRoom},
+guestAcommodation: ${guestAcommodation},
 products: ${products},
 roomBusy: ${roomBusy},
 currentAccommodation: ${currentAccommodation},

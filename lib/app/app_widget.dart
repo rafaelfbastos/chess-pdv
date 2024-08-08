@@ -11,6 +11,7 @@ class AppWidget extends StatelessWidget {
     return MaterialApp.router(
       title: 'Chess Hotel PDV',
       theme: UiConfig.theme,
+      debugShowCheckedModeBanner: false,
       routeInformationParser: Modular.routeInformationParser,
       routerDelegate: Modular.routerDelegate,
     );

@@ -23,4 +23,8 @@ class Environment {
   static String get logoUrl {
     return 'assets/img/logo-pdv.png';
   }
+
+  static String get numberFormat {
+    return '###,###,##0.00';
+  }
 }

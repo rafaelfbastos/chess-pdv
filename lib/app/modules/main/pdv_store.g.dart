@@ -40,6 +40,22 @@ mixin _$PdvStore on PdvStoreBase, Store {
     });
   }
 
+  late final _$guestAcommodationAtom =
+      Atom(name: 'PdvStoreBase.guestAcommodation', context: context);
+
+  @override
+  ObservableList<String> get guestAcommodation {
+    _$guestAcommodationAtom.reportRead();
+    return super.guestAcommodation;
+  }
+
+  @override
+  set guestAcommodation(ObservableList<String> value) {
+    _$guestAcommodationAtom.reportWrite(value, super.guestAcommodation, () {
+      super.guestAcommodation = value;
+    });
+  }
+
   late final _$selectedPdvAtom =
       Atom(name: 'PdvStoreBase.selectedPdv', context: context);
 
@@ -76,7 +92,7 @@ mixin _$PdvStore on PdvStoreBase, Store {
       AsyncAction('PdvStoreBase.loadPdvs', context: context);
 
   @override
-  Future loadPdvs() {
+  Future<void> loadPdvs() {
     return _$loadPdvsAsyncAction.run(() => super.loadPdvs());
   }
 
@@ -84,7 +100,7 @@ mixin _$PdvStore on PdvStoreBase, Store {
       ActionController(name: 'PdvStoreBase', context: context);
 
   @override
-  dynamic loadStoredPdv() {
+  void loadStoredPdv() {
     final _$actionInfo = _$PdvStoreBaseActionController.startAction(
         name: 'PdvStoreBase.loadStoredPdv');
     try {
@@ -132,6 +148,7 @@ mixin _$PdvStore on PdvStoreBase, Store {
     return '''
 isLoading: ${isLoading},
 error: ${error},
+guestAcommodation: ${guestAcommodation},
 selectedPdv: ${selectedPdv},
 pdvList: ${pdvList}
     ''';

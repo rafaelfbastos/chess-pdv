@@ -64,7 +64,8 @@ class _SelectPdvPageState extends State<SelectPdvPage> {
     return Scaffold(
       drawer: const PdvDrawer(),
       backgroundColor: context.backgroudColor,
-      appBar: const PdvAppBar(
+      appBar:  PdvAppBar(
+        guestList: widget._pdvStore.guestAcommodation,
         title: '',
       ),
       body: Observer(

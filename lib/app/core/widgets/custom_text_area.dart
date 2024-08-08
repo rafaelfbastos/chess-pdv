@@ -27,7 +27,7 @@ class CustomTextArea extends StatelessWidget {
             enabled: active,
             maxLines: 3,
             controller: controller,
-            style: TextStyle(color: context.grey, fontSize: 14),
+            style: context.inputStyle,
             decoration: InputDecoration(
               fillColor: active ? Colors.white : Colors.grey.shade100,
               filled: true,

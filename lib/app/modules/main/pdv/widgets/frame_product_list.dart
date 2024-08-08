@@ -15,6 +15,19 @@ class FrameProductList extends StatelessWidget {
   Widget build(BuildContext context) {
     var numberFormat = NumberFormat("#,##0.00", "pt_BR");
 
+    TextStyle getStyle(int? id) {
+     return controller.pdv.id == id?  TextStyle(
+        color: context.secondaryColor,
+        fontWeight: FontWeight.w700,
+      ): TextStyle(
+        color: Colors.grey[500],
+      );
+    }
+
+    bool isPdvSelected(int? id) {
+      return controller.pdv.id == id;
+    }
+
     return Observer(builder: (context) {
       return Padding(
         padding: const EdgeInsets.all(5),
@@ -76,37 +89,40 @@ class FrameProductList extends StatelessWidget {
                 rows: controller.orderproducts
                     .map<DataRow>((product) => DataRow(
                           cells: [
-                            DataCell(Text(product.description)),
+                            DataCell(Text(product.description, style: getStyle(product.pivot?.pdvId),)),
                             DataCell(Text(numberFormat
-                                .format(product.pivot?.quantity ?? 0))),
+                                .format(product.pivot?.quantity ?? 0),style: getStyle(product.pivot?.pdvId))),
                             DataCell(
-                                Text(numberFormat.format(product.salePrice))),
+                                Text(numberFormat.format(product.salePrice),style: getStyle(product.pivot?.pdvId))),
                             DataCell(
                               Text(
                                 numberFormat.format(
                                     ((product.pivot?.quantity ?? 0) *
-                                        product.salePrice)),
+                                        product.salePrice)),style: getStyle(product.pivot?.pdvId)
                               ),
                             ),
                             DataCell(Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  onPressed: () {},
+                                  tooltip: 'Editar',
+                                  onPressed:  isPdvSelected(product.pivot?.pdvId) ? () {} : null,
                                   icon: const Icon(
-                                    FontAwesomeIcons.edit,
+                                    FontAwesomeIcons.penToSquare,
                                     size: 15,
                                   ),
                                 ),
                                 IconButton(
-                                  onPressed: () => controller.openDeleteItemModal(product),
+                                  tooltip: 'Excluir',
+                                  onPressed: isPdvSelected(product.pivot?.pdvId) ? ()=> controller.openDeleteItemModal(product):null,
                                   icon: const Icon(
                                     FontAwesomeIcons.trash,
                                     size: 15,
                                   ),
                                 ),
                                 IconButton(
-                                  onPressed: () {},
+                                  tooltip: 'Imprimir',
+                                  onPressed: isPdvSelected(product.pivot?.pdvId) ? () {} : null,
                                   icon: const Icon(
                                     FontAwesomeIcons.print,
                                     size: 15,

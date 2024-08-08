@@ -1,4 +1,5 @@
 import 'package:chess_pdv/app/modules/main/pdv/pdv_page_controller.dart';
+import 'package:chess_pdv/app/modules/main/pdv/widgets/modal_new_order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -25,7 +26,6 @@ class HeaderVendas extends StatelessWidget {
                   child: Wrap(
                     spacing: 10,
                     children: [
-                    
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(80, 30),
@@ -33,7 +33,15 @@ class HeaderVendas extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
-                          onPressed: () {}, child: const Text('Nova venda', style: TextStyle(fontSize: 14),)),
+                        onPressed: () => showDialog(
+                          context: contex,
+                          builder: (context) => ModalNewOrder(controller: controller,),
+                        ),
+                        child: const Text(
+                          'Nova venda',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
                     ],
                   ),
                 ),

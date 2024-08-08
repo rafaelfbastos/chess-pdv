@@ -33,7 +33,7 @@ class NunberInputWithButtom extends StatelessWidget {
                 child: TextField(
                   enabled: active,
                   controller: controller,
-                  style: TextStyle(color: context.grey, fontSize: 12),
+                  style: context.inputStyle,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     fillColor: active ? Colors.white : Colors.grey.shade100,

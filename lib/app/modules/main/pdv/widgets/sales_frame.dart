@@ -1,5 +1,6 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:chess_pdv/app/core/helpers/debouncer.dart';
+import 'package:chess_pdv/app/core/helpers/environment.dart';
 import 'package:chess_pdv/app/core/ui/theme_extension.dart';
 import 'package:chess_pdv/app/core/widgets/custom_text_area.dart';
 import 'package:chess_pdv/app/core/widgets/increment_decrement_input.dart';
@@ -22,11 +23,11 @@ class SalesFrame extends StatefulWidget {
 }
 
 class _SalesFrameState extends State<SalesFrame> {
-  final numberFormat = NumberFormat('###.00', 'pt_BR');
-  final quantidadeEC = TextEditingController(text: '1,00');
-  final precoEC = TextEditingController();
-  final precoTotalEC = TextEditingController();
-  final descontoEC = TextEditingController();
+  final numberFormat = NumberFormat(Environment.numberFormat, 'pt_BR');
+  final quantityEC = TextEditingController(text: '1,00');
+  final priceEC = TextEditingController();
+  final totalPriceEC = TextEditingController();
+  final discountEC = TextEditingController();
   final controlerDropDown = SingleSelectController<ProductModel>(null);
   final descriptionEC = TextEditingController();
   final WidgetStatesController statesController = WidgetStatesController();
@@ -38,10 +39,10 @@ class _SalesFrameState extends State<SalesFrame> {
 
   @override
   void dispose() {
-    precoEC.dispose();
-    precoTotalEC.dispose();
-    descontoEC.dispose();
-    quantidadeEC.dispose();
+    priceEC.dispose();
+    totalPriceEC.dispose();
+    discountEC.dispose();
+    quantityEC.dispose();
     descriptionEC.dispose();
     controlerDropDown.dispose();
 
@@ -53,12 +54,20 @@ class _SalesFrameState extends State<SalesFrame> {
     final size = MediaQuery.of(context).size;
     final Debouncer debouncer = Debouncer(milliseconds: 500);
 
-    _calcTotal() {
-      final preco = numberFormat.parse(precoEC.text);
-      final qtd = numberFormat.parse(quantidadeEC.text);
-      final desconto = numberFormat.parse(descontoEC.text);
+    calcTotal() {
+      final preco = numberFormat.parse(priceEC.text);
+      final qtd = numberFormat.parse(quantityEC.text);
+      final desconto = numberFormat.parse(discountEC.text);
       final total = (preco * qtd) - desconto;
-      precoTotalEC.text = numberFormat.format(total);
+      totalPriceEC.text = numberFormat.format(total);
+    }
+
+    cleanInputs() {
+      priceEC.text = '';
+      totalPriceEC.text = '';
+      discountEC.text = '';
+      quantityEC.text = '1,00';
+      controlerDropDown.value = null;
     }
 
     return Observer(
@@ -70,6 +79,7 @@ class _SalesFrameState extends State<SalesFrame> {
                     height: 10,
                   ),
                   CustomDropdown.search(
+                    hideSelectedFieldWhenExpanded: true,
                     overlayHeight: size.height * 0.5,
                     noResultFoundText: 'Nenhum produto encontrado',
                     decoration: CustomDropdownDecoration(
@@ -83,10 +93,10 @@ class _SalesFrameState extends State<SalesFrame> {
                     onChanged: (value) {
                       if (value != null) {
                         setState(() {
-                          quantidadeEC.text = '1,00';
-                          descontoEC.text = '0,00';
-                          precoEC.text = numberFormat.format(value.salePrice);
-                          _calcTotal();
+                          quantityEC.text = '1,00';
+                          discountEC.text = '0,00';
+                          priceEC.text = numberFormat.format(value.salePrice);
+                          calcTotal();
                         });
                       }
                     },
@@ -139,46 +149,47 @@ class _SalesFrameState extends State<SalesFrame> {
                         flex: 8,
                         child: IncrementDecrementInput(
                           onDecrement: () {
-                            final qtd = numberFormat.parse(quantidadeEC.text);
+                            final qtd = numberFormat.parse(quantityEC.text);
                             if (qtd > 1) {
-                              quantidadeEC.text = numberFormat.format(qtd - 1);
-                              _calcTotal();
+                              quantityEC.text = numberFormat.format(qtd - 1);
+                              calcTotal();
                             }
                           },
                           onIncrement: () {
-                            final qtd = numberFormat.parse(quantidadeEC.text);
-                            quantidadeEC.text = numberFormat.format(qtd + 1);
-                            _calcTotal();
+                            final qtd = numberFormat.parse(quantityEC.text);
+                            quantityEC.text = numberFormat.format(qtd + 1);
+                            calcTotal();
                           },
                           onChanged: (value) => debouncer(
                             () {
                               if (value.isNotEmpty) {
-                                _calcTotal();
+                                calcTotal();
                               } else {
-                                quantidadeEC.text = '1,00';
-                                _calcTotal();
+                                quantityEC.text = '1,00';
+                                calcTotal();
                               }
                             },
                           ),
                           label: 'Quantidade:',
-                          controller: quantidadeEC,
+                          controller: quantityEC,
                         ),
                       ),
                       const Flexible(flex: 1, child: SizedBox()),
                       Flexible(
-                          flex: 8,
-                          child: NunberInputWithButtom(
-                            active: false,
-                            label: 'Desconto',
-                            controller: descontoEC,
-                            onTap: () {},
-                            icon: Icons.percent,
-                          )),
+                        flex: 8,
+                        child: NunberInputWithButtom(
+                          active: false,
+                          label: 'Desconto:',
+                          controller: discountEC,
+                          onTap: (){  },
+                          icon: Icons.percent,
+                        ),
+                      ),
                       const Flexible(flex: 1, child: SizedBox()),
                       Flexible(
                         flex: 8,
                         child: NumberInput(
-                          controller: precoEC,
+                          controller: priceEC,
                           label: 'Valor unitário:',
                         ),
                       ),
@@ -186,8 +197,8 @@ class _SalesFrameState extends State<SalesFrame> {
                       Flexible(
                         flex: 8,
                         child: NumberInput(
-                          controller: precoTotalEC,
-                          label: 'Sub Total:',
+                          controller: totalPriceEC,
+                          label: 'Subtotal:',
                         ),
                       ),
                     ],
@@ -221,7 +232,16 @@ class _SalesFrameState extends State<SalesFrame> {
                                 ),
                               ),
                               onPressed: widget.controller.selectedRoom != null
-                                  ? () {}
+                                  ? () {
+                                      final qtd = numberFormat
+                                          .tryParse(quantityEC.text);
+                                      final produc = controlerDropDown.value;
+                                      if (qtd != null && produc != null) {
+                                        widget.controller
+                                            .insertProduct(produc, qtd.toInt());
+                                        cleanInputs();
+                                      }
+                                    }
                                   : null,
                               child: const Text('Inserir',
                                   style: TextStyle(fontSize: 16)),

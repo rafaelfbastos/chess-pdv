@@ -66,7 +66,7 @@ class IncrementDecrementInput extends StatelessWidget {
                   CentavosInputFormatter()
                 ],
                 controller: controller,
-                style: TextStyle(color: context.grey, fontSize: 12),
+                style: context.inputStyle,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   isDense: true,

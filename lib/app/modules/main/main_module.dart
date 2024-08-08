@@ -22,9 +22,6 @@ class MainModule extends Module {
   List<Bind> get binds => [
         Bind<PdvRepository>((i) => PdvRepositoryImpl(dio: i())),
         Bind<PdvService>((i) => PdvServiceImpl(pdvRepository: i())),
-        Bind.singleton<PdvStore>((i) => PdvStore(pdvService: i())
-          ..loadStoredPdv()
-          ..loadPdvs()),
         // Product
         Bind<ProductRepository>((i)=> ProductRepositoryImpl(dio: i())),
         Bind<ProductService>((i)=>ProductServiceImpl(productRepository: i())),
@@ -32,6 +29,8 @@ class MainModule extends Module {
         Bind<RoomRepository>((i) => RoomRepositoryImpl(dio: i())),
         Bind<RoomService>((i) => RoomServiceImpl(roomRepository: i())),
         // Controllers
+        Bind.singleton<PdvStore>((i) => PdvStore(pdvService: i(), roomService: i())
+          ..loadAll()),
         Bind<PdvPageController>(
           (i) => PdvPageController(pdvStore: i(), productService: i(),roomService: i())..load())
       ];

@@ -5,17 +5,31 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
-class DeleteProductsModal extends StatelessWidget {
+class DeleteProductsModal extends StatefulWidget {
   final PdvPageController controller;
 
   const DeleteProductsModal({super.key, required this.controller});
+
+  @override
+  State<DeleteProductsModal> createState() => _DeleteProductsModalState();
+}
+
+class _DeleteProductsModalState extends State<DeleteProductsModal> {
+
+  final descriptionEC = TextEditingController();
+
+  @override
+  void dispose() {
+    descriptionEC.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     final numberFormat = NumberFormat("#,##0.00", "pt_BR");
     var qtd = 1;
     final numberEC = TextEditingController(text: numberFormat.format(qtd));
-    final descriptionEC = TextEditingController();
 
     return Observer(
         builder: (context) => AlertDialog(
@@ -30,7 +44,7 @@ class DeleteProductsModal extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: Text(
-                        'Quantidade: ${numberFormat.format(controller.selectedProduct?.pivot?.quantity)}',
+                        'Quantidade: ${numberFormat.format(widget.controller.selectedProduct?.pivot?.quantity)}',
                         textAlign: TextAlign.start,
                         style: const TextStyle(
                             color: Color(0xff93969b),
@@ -83,7 +97,7 @@ class DeleteProductsModal extends StatelessWidget {
                           child: IconButton(
                             onPressed: () {
                               if (qtd <
-                                  controller.selectedProduct!.pivot!.quantity) {
+                                  widget.controller.selectedProduct!.pivot!.quantity) {
                                 qtd++;
                                 numberEC.text = numberFormat.format(qtd);
                               }
@@ -107,7 +121,7 @@ class DeleteProductsModal extends StatelessWidget {
                         labelStyle: TextStyle(
                           color: context.grey,
                         ),
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                       ),
                     ),
                   ],
@@ -120,7 +134,8 @@ class DeleteProductsModal extends StatelessWidget {
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () {
-                    controller.delectProduct(qtd);
+                    final description = descriptionEC.text;
+                    widget.controller.delectProduct(qtd, description);
                     Navigator.of(context).pop();
                   },
                   child: const Padding(

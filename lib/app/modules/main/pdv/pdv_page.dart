@@ -1,6 +1,9 @@
+import 'package:chess_pdv/app/core/helpers/environment.dart';
 import 'package:chess_pdv/app/core/ui/messages.dart';
 import 'package:chess_pdv/app/core/ui/theme_extension.dart';
+import 'package:chess_pdv/app/core/widgets/bar_card.dart';
 import 'package:chess_pdv/app/core/widgets/content.dart';
+import 'package:chess_pdv/app/core/widgets/table_card.dart';
 import 'package:chess_pdv/app/modules/main/pdv/pdv_page_controller.dart';
 import 'package:chess_pdv/app/modules/main/pdv/widgets/delete_products_modal.dart';
 import 'package:chess_pdv/app/modules/main/pdv/widgets/frame_grid_rooms.dart';
@@ -51,6 +54,13 @@ class _PdvPageState extends State<PdvPage> with SingleTickerProviderStateMixin {
       }
     });
 
+    final successMessage = reaction((__) => widget._controller.success, (msg) {
+      if (msg.isNotEmpty) {
+        Messages.of(context).showSuccess(msg);
+        widget._controller.setSuccess('');
+      }
+    });
+
     final pdvChangeReaction = reaction((__) => widget._controller.pdv, (pdv) {
       widget._controller.clear();
     });
@@ -68,22 +78,27 @@ class _PdvPageState extends State<PdvPage> with SingleTickerProviderStateMixin {
       }
     });
 
-    toDispose.addAll(
-        [loadReaction, errorMessage, pdvChangeReaction, dialogDeleteItem]);
+    toDispose.addAll([
+      loadReaction,
+      errorMessage,
+      pdvChangeReaction,
+      dialogDeleteItem,
+      successMessage
+    ]);
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final numberFormat = NumberFormat("#,##0.00", "pt_BR");
+    final numberFormat = NumberFormat(Environment.numberFormat, "pt_BR");
 
     return Scaffold(
       backgroundColor: context.backgroudColor,
       drawer: const PdvDrawer(),
       appBar: PdvAppBar(
-        title: 'Ponto de Venda  - ${widget._controller.pdv.description}',
-      ),
+          title: 'Ponto de Venda  - ${widget._controller.pdv.description}',
+          guestList: widget._controller.guestAcommodation),
       body: Observer(
         builder: (context) {
           return SizedBox(
@@ -206,17 +221,26 @@ class _PdvPageState extends State<PdvPage> with SingleTickerProviderStateMixin {
                   const SizedBox(
                     width: 3,
                   ),
-                  const Expanded(
+                  Expanded(
                     flex: 1,
                     child: Content(
-                      header: Text(
+                      header: const Text(
                         'MESAS',
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 15),
                       ),
-                      body: Text('Body'),
+                      body: SizedBox(
+                        width: double.maxFinite,
+                        height: double.maxFinite,
+                        child: ListView(children: const [
+                          TableCard(tableNumber: '1'),
+                          TableCard(tableNumber: '2'),
+                          BarCard(name: 'Rafael'),
+                          TableCard(tableNumber: '3'),
+                        ],)
+                      ),
                     ),
                   )
                 ],
