@@ -22,6 +22,20 @@ mixin _$PdvPageController on PdvPageControllerBase, Store {
       (_$totalValueComputed ??= Computed<double>(() => super.totalValue,
               name: 'PdvPageControllerBase.totalValue'))
           .value;
+  Computed<bool>? _$isAccommodationComputed;
+
+  @override
+  bool get isAccommodation =>
+      (_$isAccommodationComputed ??= Computed<bool>(() => super.isAccommodation,
+              name: 'PdvPageControllerBase.isAccommodation'))
+          .value;
+  Computed<bool>? _$isOrderSplipComputed;
+
+  @override
+  bool get isOrderSplip =>
+      (_$isOrderSplipComputed ??= Computed<bool>(() => super.isOrderSplip,
+              name: 'PdvPageControllerBase.isOrderSplip'))
+          .value;
 
   late final _$isLoadingAtom =
       Atom(name: 'PdvPageControllerBase.isLoading', context: context);
@@ -248,6 +262,38 @@ mixin _$PdvPageController on PdvPageControllerBase, Store {
     });
   }
 
+  late final _$orderSplipsAtom =
+      Atom(name: 'PdvPageControllerBase.orderSplips', context: context);
+
+  @override
+  ObservableList<OrderSplipModel> get orderSplips {
+    _$orderSplipsAtom.reportRead();
+    return super.orderSplips;
+  }
+
+  @override
+  set orderSplips(ObservableList<OrderSplipModel> value) {
+    _$orderSplipsAtom.reportWrite(value, super.orderSplips, () {
+      super.orderSplips = value;
+    });
+  }
+
+  late final _$selectedOrderSplipAtom =
+      Atom(name: 'PdvPageControllerBase.selectedOrderSplip', context: context);
+
+  @override
+  OrderSplipModel? get selectedOrderSplip {
+    _$selectedOrderSplipAtom.reportRead();
+    return super.selectedOrderSplip;
+  }
+
+  @override
+  set selectedOrderSplip(OrderSplipModel? value) {
+    _$selectedOrderSplipAtom.reportWrite(value, super.selectedOrderSplip, () {
+      super.selectedOrderSplip = value;
+    });
+  }
+
   late final _$loadProductsAsyncAction =
       AsyncAction('PdvPageControllerBase.loadProducts', context: context);
 
@@ -283,13 +329,23 @@ mixin _$PdvPageController on PdvPageControllerBase, Store {
         .run(() => super.delectProduct(qtd, description));
   }
 
-  late final _$insertProductAsyncAction =
-      AsyncAction('PdvPageControllerBase.insertProduct', context: context);
+  late final _$insertProductAccommodationAsyncAction = AsyncAction(
+      'PdvPageControllerBase.insertProductAccommodation',
+      context: context);
 
   @override
-  Future insertProduct(ProductModel product, int qtd) {
-    return _$insertProductAsyncAction
-        .run(() => super.insertProduct(product, qtd));
+  Future insertProductAccommodation(ProductModel product, int qtd) {
+    return _$insertProductAccommodationAsyncAction
+        .run(() => super.insertProductAccommodation(product, qtd));
+  }
+
+  late final _$insertProductOrderAsyncAction =
+      AsyncAction('PdvPageControllerBase.insertProductOrder', context: context);
+
+  @override
+  Future insertProductOrder(ProductModel product, int qtd) {
+    return _$insertProductOrderAsyncAction
+        .run(() => super.insertProductOrder(product, qtd));
   }
 
   late final _$PdvPageControllerBaseActionController =
@@ -340,6 +396,28 @@ mixin _$PdvPageController on PdvPageControllerBase, Store {
   }
 
   @override
+  dynamic createOrderSplip(OrderSplipModel order) {
+    final _$actionInfo = _$PdvPageControllerBaseActionController.startAction(
+        name: 'PdvPageControllerBase.createOrderSplip');
+    try {
+      return super.createOrderSplip(order);
+    } finally {
+      _$PdvPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setCurrentOrderSplip(int index) {
+    final _$actionInfo = _$PdvPageControllerBaseActionController.startAction(
+        name: 'PdvPageControllerBase.setCurrentOrderSplip');
+    try {
+      return super.setCurrentOrderSplip(index);
+    } finally {
+      _$PdvPageControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 isLoading: ${isLoading},
@@ -356,8 +434,12 @@ titleProduct: ${titleProduct},
 titleVenda: ${titleVenda},
 showDeleteItemModal: ${showDeleteItemModal},
 selectedProduct: ${selectedProduct},
+orderSplips: ${orderSplips},
+selectedOrderSplip: ${selectedOrderSplip},
 pdv: ${pdv},
-totalValue: ${totalValue}
+totalValue: ${totalValue},
+isAccommodation: ${isAccommodation},
+isOrderSplip: ${isOrderSplip}
     ''';
   }
 }

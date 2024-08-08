@@ -31,7 +31,7 @@ class MainModule extends Module {
         // Controllers
         Bind.singleton<PdvStore>((i) => PdvStore(pdvService: i(), roomService: i())
           ..loadAll()),
-        Bind<PdvPageController>(
+        Bind.singleton<PdvPageController>(
           (i) => PdvPageController(pdvStore: i(), productService: i(),roomService: i())..load())
       ];
 

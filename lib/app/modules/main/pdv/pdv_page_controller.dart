@@ -1,6 +1,7 @@
 import 'package:chess_pdv/app/core/excepition/fetch_exception.dart';
 import 'package:chess_pdv/app/model/accommodation_item_removed_model.dart';
 import 'package:chess_pdv/app/model/accommodation_model.dart';
+import 'package:chess_pdv/app/model/order_splip_model.dart';
 import 'package:chess_pdv/app/model/pdv_model.dart';
 import 'package:chess_pdv/app/model/product_model.dart';
 import 'package:chess_pdv/app/model/product_pivot.dart';
@@ -25,6 +26,7 @@ abstract class PdvPageControllerBase with Store {
   })  : _pdvStore = pdvStore,
         _productService = productService,
         _roomService = roomService;
+        
 
   @observable
   bool isLoading = false;
@@ -78,7 +80,17 @@ abstract class PdvPageControllerBase with Store {
   @observable
   ProductModel? selectedProduct;
 
-  
+  @observable
+  ObservableList<OrderSplipModel> orderSplips = ObservableList<OrderSplipModel>();
+
+  @observable
+  OrderSplipModel? selectedOrderSplip;
+
+  @computed
+  bool get isAccommodation => selectedRoom != null;
+
+  @computed
+  bool get isOrderSplip => selectedOrderSplip != null;
 
   @action
   Future<void> loadProducts() async {
@@ -115,6 +127,7 @@ abstract class PdvPageControllerBase with Store {
   @action
   setCurrentAccommodation(RoomExibhitionModel room) async {
     isLoading = true;
+    selectedOrderSplip = null;
     selectedRoom = room;
     titleProduct = 'Consumo do quarto ${room.description}';
     titleVenda = 'Vendas - Quarto ${room.description}';
@@ -208,7 +221,7 @@ abstract class PdvPageControllerBase with Store {
   }
 
   @action
-  insertProduct(ProductModel product, int qtd) async {
+  insertProductAccommodation(ProductModel product, int qtd) async {
     isLoading = true;
     try {
       final index = orderproducts
@@ -235,5 +248,61 @@ abstract class PdvPageControllerBase with Store {
     } finally {
       isLoading = false;
     }
+  }
+  @action
+  insertProductOrder(ProductModel product, int qtd) async {
+    isLoading = true;
+    try {
+      final index = orderproducts
+          .indexWhere((e) => e.id == product.id && e.pivot?.pdvId == pdv.id);
+      if (index != -1) {
+        final producFinded = orderproducts.elementAt(index);
+        final qtdExist = producFinded.pivot!.quantity;
+        final pivot = producFinded.pivot?.copyWith(quantity: qtdExist + qtd);
+        orderproducts[index] = producFinded.copyWith(pivot: pivot);
+      } else {
+        final pivot = ProductPivot(
+            accommodationId: 0,
+            productId: product.id,
+            quantity: qtd,
+            pdvId: pdv.id);
+        final productAdd = product.copyWith(pivot: pivot);
+        orderproducts.add(productAdd);
+      }
+
+      final id = orderSplips
+          .indexWhere((e) => e.tableNumber == selectedOrderSplip?.tableNumber);
+ 
+
+      final order = selectedOrderSplip!.copyWith(products: orderproducts);
+
+      orderSplips[id] = order;
+
+      final newlist = orderSplips.toList();
+      orderSplips.clear();
+      orderSplips.addAll(newlist);
+
+      success = 'Produto adicionado com sucesso';
+    } catch (e) {
+      error = 'Erro ao adicionar produto';
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  createOrderSplip(OrderSplipModel order) {
+    orderSplips.add(order);
+  }
+
+  @action
+  setCurrentOrderSplip(int index) {
+    selectedRoom = null;
+    selectedOrderSplip = orderSplips[index];
+    titleProduct = 'Consumo ${selectedOrderSplip!.type} - ${selectedOrderSplip!.tableNumber}';
+    titleVenda = 'Vendas - Quarto ${selectedOrderSplip!.type} - ${selectedOrderSplip!.tableNumber}';
+    orderproducts.clear();
+    orderproducts.addAll(selectedOrderSplip!.products!);
+    showRoomGrid = false;
   }
 }

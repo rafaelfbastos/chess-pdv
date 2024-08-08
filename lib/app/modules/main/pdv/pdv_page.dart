@@ -234,12 +234,25 @@ class _PdvPageState extends State<PdvPage> with SingleTickerProviderStateMixin {
                       body: SizedBox(
                         width: double.maxFinite,
                         height: double.maxFinite,
-                        child: ListView(children: const [
-                          TableCard(tableNumber: '1'),
-                          TableCard(tableNumber: '2'),
-                          BarCard(name: 'Rafael'),
-                          TableCard(tableNumber: '3'),
-                        ],)
+                        child: ListView.builder(
+                          itemCount: widget._controller.orderSplips.length,
+                          itemBuilder: (context, index) =>
+                              widget._controller.orderSplips[index].type ==
+                                      'Mesa'
+                                  ? TableCard(
+                                      tableNumber: widget._controller
+                                              .orderSplips[index].tableNumber ??
+                                          '',
+                                      onTap: () => widget._controller
+                                          .setCurrentOrderSplip(index))
+                                  : BarCard(
+                                      name: widget._controller
+                                              .orderSplips[index].tableNumber ??
+                                          '',
+                                      onTap: () => widget._controller
+                                          .setCurrentOrderSplip(index),
+                                    ),
+                        ),
                       ),
                     ),
                   )

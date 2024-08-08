@@ -231,14 +231,19 @@ class _SalesFrameState extends State<SalesFrame> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                              onPressed: widget.controller.selectedRoom != null
+                              onPressed: widget.controller.selectedRoom != null ||
+                                      widget.controller.selectedOrderSplip != null
                                   ? () {
                                       final qtd = numberFormat
                                           .tryParse(quantityEC.text);
                                       final produc = controlerDropDown.value;
-                                      if (qtd != null && produc != null) {
+                                      if (qtd != null && produc != null && widget.controller.isAccommodation) {
+                                        widget.controller.insertProductAccommodation(produc, qtd.toInt());
+                                        cleanInputs();
+                                      }
+                                      if (qtd != null && produc != null && widget.controller.isOrderSplip) {
                                         widget.controller
-                                            .insertProduct(produc, qtd.toInt());
+                                            .insertProductOrder(produc, qtd.toInt());
                                         cleanInputs();
                                       }
                                     }
