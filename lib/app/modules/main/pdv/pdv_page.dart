@@ -133,11 +133,15 @@ class _PdvPageState extends State<PdvPage> with SingleTickerProviderStateMixin {
                                 child: Column(
                                   children: [
                                     Expanded(
-                                      flex: 1,
+                                      flex: 2,
                                       child: LayoutBuilder(
                                         builder: (context, constraints) {
                                           return TabBar(
                                             controller: _tabController,
+                                            labelStyle: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                             tabs:  [
                                               Tab(
                                                 icon: constraints.maxHeight>=50? const Icon(Icons.shopping_cart):null,
@@ -157,7 +161,7 @@ class _PdvPageState extends State<PdvPage> with SingleTickerProviderStateMixin {
                                       ),
                                     ),
                                     Expanded(
-                                      flex: 14,
+                                      flex: 22,
                                       child: TabBarView(
                                         controller: _tabController,
                                         children: [
