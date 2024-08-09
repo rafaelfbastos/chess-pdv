@@ -134,25 +134,26 @@ class _PdvPageState extends State<PdvPage> with SingleTickerProviderStateMixin {
                                   children: [
                                     Expanded(
                                       flex: 1,
-                                      child: TabBar(
-                                        labelStyle: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                        controller: _tabController,
-                                        tabs: const [
-                                          Tab(
-                                            icon: Icon(Icons.shopping_cart),
-                                            text: 'Produtos',
-                                          ),
-                                          Tab(
-                                            icon: Icon(Icons.person),
-                                            text: 'Hóspede',
-                                          ),
-                                          Tab(
-                                            icon: Icon(Icons.payment),
-                                            text: 'Pagamento',
-                                          ),
-                                        ],
+                                      child: LayoutBuilder(
+                                        builder: (context, constraints) {
+                                          return TabBar(
+                                            controller: _tabController,
+                                            tabs:  [
+                                              Tab(
+                                                icon: constraints.maxHeight>=50? const Icon(Icons.shopping_cart):null,
+                                                text: 'Produtos',
+                                              ),
+                                              Tab(
+                                                icon: constraints.maxHeight>=50?const Icon(Icons.person):null,
+                                                text: 'Hóspede',
+                                              ),
+                                              Tab(
+                                                icon:constraints.maxHeight>=50? const Icon(Icons.payment):null,
+                                                text: 'Pagamento',
+                                              ),
+                                            ],
+                                          );
+                                        }
                                       ),
                                     ),
                                     Expanded(

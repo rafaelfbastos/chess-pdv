@@ -73,7 +73,7 @@ class _SalesFrameState extends State<SalesFrame> {
     return Observer(
         builder: (context) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-              child: Column(
+              child: ListView(
                 children: [
                   const SizedBox(
                     height: 10,
@@ -206,53 +206,51 @@ class _SalesFrameState extends State<SalesFrame> {
                   const SizedBox(
                     height: 40,
                   ),
-                  Flexible(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                            flex: 8,
-                            child: CustomTextArea(
-                                label: 'Descrição:',
-                                controller: descriptionEC)),
-                        const Flexible(
-                          flex: 1,
-                          child: SizedBox(),
-                        ),
-                        Expanded(
-                            flex: 4,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                side: widget.controller.selectedRoom != null
-                                    ? BorderSide(color: context.secondaryColor)
-                                    : null,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              onPressed: widget.controller.selectedRoom != null ||
-                                      widget.controller.selectedOrderSplip != null
-                                  ? () {
-                                      final qtd = numberFormat
-                                          .tryParse(quantityEC.text);
-                                      final produc = controlerDropDown.value;
-                                      if (qtd != null && produc != null && widget.controller.isAccommodation) {
-                                        widget.controller.insertProductAccommodation(produc, qtd.toInt());
-                                        cleanInputs();
-                                      }
-                                      if (qtd != null && produc != null && widget.controller.isOrderSplip) {
-                                        widget.controller
-                                            .insertProductOrder(produc, qtd.toInt());
-                                        cleanInputs();
-                                      }
-                                    }
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                          flex: 8,
+                          child: CustomTextArea(
+                              label: 'Descrição:',
+                              controller: descriptionEC)),
+                      const Flexible(
+                        flex: 1,
+                        child: SizedBox(),
+                      ),
+                      Expanded(
+                          flex: 4,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              side: widget.controller.selectedRoom != null
+                                  ? BorderSide(color: context.secondaryColor)
                                   : null,
-                              child: const Text('Inserir',
-                                  style: TextStyle(fontSize: 16)),
-                            )),
-                      ],
-                    ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: widget.controller.selectedRoom != null ||
+                                    widget.controller.selectedOrderSplip != null
+                                ? () {
+                                    final qtd = numberFormat
+                                        .tryParse(quantityEC.text);
+                                    final produc = controlerDropDown.value;
+                                    if (qtd != null && produc != null && widget.controller.isAccommodation) {
+                                      widget.controller.insertProductAccommodation(produc, qtd.toInt());
+                                      cleanInputs();
+                                    }
+                                    if (qtd != null && produc != null && widget.controller.isOrderSplip) {
+                                      widget.controller
+                                          .insertProductOrder(produc, qtd.toInt());
+                                      cleanInputs();
+                                    }
+                                  }
+                                : null,
+                            child: const Text('Inserir',
+                                style: TextStyle(fontSize: 16)),
+                          )),
+                    ],
                   )
                 ],
               ),
